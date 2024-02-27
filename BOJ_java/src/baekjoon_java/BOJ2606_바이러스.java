@@ -44,6 +44,9 @@ public class BOJ2606_바이러스 {
 				}
 			}
 		}
+		for(int i = 0; i <= V; i++) {
+			System.out.print(visited[i]+" ");
+		}
 		return;
 	}
 
