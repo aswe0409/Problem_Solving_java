@@ -46,7 +46,8 @@ public class Main {
 				for(int j = 0; j <m; j++) {
 					if(arr[i][j] == 1) {
 						cnt +=1;
-						bfs(i,j);					
+						//bfs(i,j);		
+						dfs(i,j);
 					}
 	
 				}
@@ -68,6 +69,19 @@ public class Main {
 					arr[newi][newj] = 0;
 					q.offer(new Pos(newi, newj));
 				}
+			}
+		}
+		return;
+	}
+	
+	static void dfs(int nowi, int nowj) {
+		arr[nowi][nowj] = 0;
+		for(int d = 0; d <4; d++) {
+			int newi = nowi + di[d];
+			int newj = nowj + dj[d];
+			if(newi >=0 && newi < n && newj >=0 && newj < m && arr[newi][newj] == 1) {
+				arr[newi][newj] = 0;
+				dfs(newi,newj);
 			}
 		}
 		return;
