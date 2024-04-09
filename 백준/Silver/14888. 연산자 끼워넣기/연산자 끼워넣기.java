@@ -8,18 +8,13 @@ public class Main {
 	static int max = Integer.MIN_VALUE;
 	static int min = Integer.MAX_VALUE;
 	public static void main(String[] args) throws NumberFormatException, IOException {
-		//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		//n = Integer.parseInt(br.readLine());
 		Scanner sc = new Scanner(System.in);
 		n = sc.nextInt();
 		number = new int[n];
-		
-		
+	
 		for(int i = 0; i < n; i++) {
 			number[i] = sc.nextInt();
 		}
-		
-		//st = new StringTokenizer(br.readLine());
 		
 		for(int i = 0; i < 4; i++) {
 			oper[i] = sc.nextInt();
