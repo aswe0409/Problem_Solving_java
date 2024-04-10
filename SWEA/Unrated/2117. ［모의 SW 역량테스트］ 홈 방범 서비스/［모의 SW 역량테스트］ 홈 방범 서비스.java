@@ -1,83 +1,79 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Solution {
 	static class Pos{
 		int row, col;
-		public Pos(int row, int col) {
+		Pos(int row, int col){
 			this.row = row;
 			this.col = col;
 		}
 	}
-	
-	static int n; // 개수
-	static int m; // 비용
-	static int [][]map;
+	static int n,m;
+	static int [][]arr;
 	static Queue<Pos> q;
 	static int []di = {1,-1,0,0};
 	static int []dj = {0,0,1,-1};
-	static int ret;
-	
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
+	static int ans;
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int t = Integer.parseInt(br.readLine());
 		
-		int tc = sc.nextInt();
-		for(int test = 1; test <= tc; test++) {
-			n = sc.nextInt();
-			m = sc.nextInt();
-			ret = 0;
-			map = new int[n][n];
-			int max = 0;
+		for(int test = 1; test <=t; test++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			n = Integer.parseInt(st.nextToken());
+			m = Integer.parseInt(st.nextToken());
+			arr = new int[n][n];
 			q = new LinkedList<>();
-			
-			for(int i =0; i < n; i++) {
+			ans = Integer.MIN_VALUE;
+			for(int i = 0; i < n; i++) {
+				st = new StringTokenizer(br.readLine());
 				for(int j = 0; j < n; j++) {
-					map[i][j] = sc.nextInt();
-				}
-			} 
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < n; j++) {
-					bfs(i, j); // 모든칸을 서비스 영역의 중심으로 놓고 K영역 넓혀가면서 수익 계산해보기
+					arr[i][j] = Integer.parseInt(st.nextToken());
 				}
 			}
-
-			System.out.println("#"+test+" "+ret);
+			
+			for(int i = 0; i < n; i++) {
+				for(int j = 0; j < n; j++) {
+					bfs(i,j);
+				}
+			}
+			System.out.println("#"+test+" "+ans);
 		}
 	}
-	
-	private static void bfs(int nowi, int nowj) {
+	static void bfs(int nowi, int nowj) {
+		boolean [][] visit = new boolean[n][n];
 		q.offer(new Pos(nowi, nowj));
-		boolean[][] visit = new boolean[n][n];
-		
 		visit[nowi][nowj] = true;
-		int k = 1; // 현재 서비스 영역의 크기는 중심 1칸
-		int house = 0; // 서비스 받는 가정집 개수
+		int k = 1;
+		int house = 0;
 		while(!q.isEmpty()) {
+			
 			int size = q.size();
-		
-			for(int s = 0; s < size; s++) {
-				Pos temp = q.poll();
-				if(map[temp.row][temp.col] == 1) {
+			for(int i = 0; i < size; i++) {
+				Pos cur = q.poll();
+				if(arr[cur.row][cur.col] ==1) { //해당 위치가 집이면 +1
 					house+=1;
 				}
-				
-				for(int d = 0; d < 4; d++) {
-					int newi = temp.row + di[d];
-					int newj = temp.col + dj[d];
+				for(int d = 0; d <4; d++) {
+					int newi = cur.row + di[d];
+					int newj = cur.col + dj[d];
 					if(newi>=0 && newi<n && newj>=0 && newj<n && !visit[newi][newj]) {
-						q.add(new Pos(newi, newj));
+						q.offer(new Pos(newi, newj));
 						visit[newi][newj] = true;
-					}	
+					}
 				}
 			}
-			int cost = k*k+(k-1)*(k-1); // 현재 서비스 하는 영역의 지출
-			int income = house*m; // 현재까지 영역의 누적 고객 가정집 수익
-
+			int cost = k * k + (k - 1) * (k - 1);
+			int income = house * m;
 			if(cost <= income) {
-				ret = Math.max(ret, house);
+				ans = Math.max(ans, house);
 			}
-			k++;
+			k+=1;
 		}
 	}
 }
