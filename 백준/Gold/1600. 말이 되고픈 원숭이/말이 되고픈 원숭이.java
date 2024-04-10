@@ -1,87 +1,86 @@
-import java.util.ArrayDeque;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
-	static int K,W,H;
-	static int[][] map;
-	static boolean[][][] visit; // 어떤 i,j에 스킬을 몇 번 쓰고 왔는지 k가지를 각각 t/f 기록하기 위해
+	static class Pos{
+		int row, col, skill;
+		Pos(int row, int col, int skill){
+			this.row = row;
+			this.col = col;
+			this.skill = skill;
+		}
+	}
+	static int k,w,h;
+	static int [][] map;
+	static boolean [][][] visit;
 	
 	static int [] di = {0,0,1,-1};
 	static int[] dj = {1,-1,0,0};
-	
 	static int[] sdi = {-2,-1,1,2,2,1,-1,-2};
 	static int[] sdj = {1,2,2,1,-1,-2,-2,-1};
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
+	
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br  = new BufferedReader(new InputStreamReader(System.in));
+		k = Integer.parseInt(br.readLine());
 		
-		K = sc.nextInt();
-		W = sc.nextInt();
-		H = sc.nextInt();
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		w = Integer.parseInt(st.nextToken());
+		h = Integer.parseInt(st.nextToken());
+		map = new int[h][w];
+		visit = new boolean[h][w][k+1];
 		
-		map = new int[H][W];
-		visit = new boolean[H][W][K+1]; // 스킬을 다 썼을 경우 인덱스 K를 써야 함!
-		
-		for(int i = 0; i < H; i++) {
-			for(int j = 0; j < W; j++) {
-				map[i][j] = sc.nextInt();
+		for(int i = 0; i < h; i++) {
+			st = new StringTokenizer(br.readLine());
+			for(int j = 0; j <w; j++) {
+				map[i][j] = Integer.parseInt(st.nextToken());
 			}
 		}
 		System.out.println(bfs());
 	}
+	
 	static int bfs() {
-		Queue<Point> q = new ArrayDeque<>();
-		q.add(new Point(0,0,0));
-		visit[0][0][0] = true; //스킬 사용 0회로 출발지에 있음 기록
-		
+		Queue<Pos> q = new LinkedList<>();
+		q.offer(new Pos(0,0,0));
+		visit[0][0][0] =true;
 		int time = 0;
 		
 		while(!q.isEmpty()) {
 			int size = q.size();
-			for(int s = 0; s< size; s++) {
-				Point now = q.poll();
-				if(now.i == H-1 && now.j == W-1) {
+			for(int i = 0; i < size; i++) {
+				Pos cur = q.poll();
+				if(cur.row == h-1 && cur.col == w-1) { //도착
 					return time;
 				}
-				else {
-					for(int d = 0; d< 4; d++) { // 걸어다니는 애들이 다음 시간에 이동가능한 칸 탐색
-						int nexti = now.i + di[d];
-						int nextj = now.j + dj[d];
-						
-						//나 지금 걷는 중이라 스킬횟수 증가 없이 그 칸 도착 하는데 그전에 안 지나간거 맞지?
-						if(nexti >= 0 && nexti < H && nextj >= 0 && nextj < W && map[nexti][nextj] == 0
-								&& !visit[nexti][nextj][now.skill]) {
-							visit[nexti][nextj][now.skill] = true;
-							q.add(new Point(nexti, nextj, now.skill)); // 스킬횟수 동일
+				else {//스킬 안 쓰고 지나가는 경우 
+					for(int d= 0; d < 4; d++) {
+						int newi = cur.row + di[d];
+						int newj = cur.col + dj[d];
+						if(newi >= 0 && newi < h && newj >= 0 && newj < w && map[newi][newj] == 0
+								&& !visit[newi][newj][cur.skill]) {
+							visit[newi][newj][cur.skill] = true;
+							q.offer(new Pos(newi, newj, cur.skill)); // 스킬 아직 안 썻기 때문에 스킬 횟수 동일
 						}
 					}
-					if(now.skill <= K - 1) {
-						for(int d= 0; d< 8; d++) { //이번에는 스킬써서 이동한다면 한시간 뒤에 가게되는 칸 탐색
-							int nexti = now.i + sdi[d];
-							int nextj = now.j + sdj[d];
-							
-							if(nexti >= 0 && nexti < H && nextj >= 0 && nextj < W && map[nexti][nextj]== 0
-									&& !visit[nexti][nextj][now.skill+1]) {
-								visit[nexti][nextj][now.skill+1] = true;
-								q.add(new Point(nexti, nextj, now.skill+1));
+					// 스킬 써서 이동
+					if(cur.skill <= k -1) {
+						for(int d = 0; d <8; d++) {
+							int newi = cur.row + sdi[d];
+							int newj = cur.col + sdj[d];
+							if(newi >= 0 && newi < h && newj >= 0 && newj < w && map[newi][newj] == 0
+									&& !visit[newi][newj][cur.skill+1]) {
+								visit[newi][newj][cur.skill+1] = true;
+								q.offer(new Pos(newi, newj, cur.skill+1));
 							}
 						}
 					}
-				
 				}
-				
 			}
 			time +=1;
 		}
 		return -1;
-	}
-	
-	static class Point{
-		int i, j, skill;
-		public Point(int i, int j, int skill) {
-			this.i = i;
-			this.j = j;
-			this.skill = skill;
-		}
 	}
 }
