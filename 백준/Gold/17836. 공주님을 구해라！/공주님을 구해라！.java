@@ -16,13 +16,12 @@ public class Main {
             this.state = state;
         }
     }
-
     static int n, m, t;
     static int[][] arr;
     static boolean[][][] visit; 
     static int[] di = {1, -1, 0, 0};
     static int[] dj = {0, 0, -1, 1};
-
+    
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -42,44 +41,44 @@ public class Main {
         }
         bfs();
     }
-
-    private static void bfs() {
-        Queue<Pos> q = new LinkedList<>();
-        q.offer(new Pos(0, 0, 0, 0));
-        visit[0][0][0] = true;
-
-        while (!q.isEmpty()) {
-            Pos temp = q.poll();
-
-            if (temp.cnt > t) {
-                continue;
-            }
-
-            if (temp.row == n - 1 && temp.col == m - 1) {
-                System.out.println(temp.cnt);
-                return;
-            }
-
-            for (int k = 0; k < 4; k++) {
-                int newi = temp.row + di[k];
-                int newj = temp.col + dj[k];
-
-                if (newi >= 0 && newi < n && newj >= 0 && newj < m) {
-                    // 칼 없어
-                    if (temp.state == 0 && !visit[newi][newj][0] && (arr[newi][newj] == 0 || arr[newi][newj] == 2)) {
-                        visit[newi][newj][0] = true;
-                        int nextState = arr[newi][newj] == 2 ? 1 : 0; // 칼을 찾으면 상태를 변경
-                        q.offer(new Pos(newi, newj, temp.cnt + 1, nextState));
-                    }
-
-                    // 칼을 얻음
-                    if (temp.state == 1 && !visit[newi][newj][1]) { // 모든칸 방문 가능
-                        visit[newi][newj][1] = true;
+    
+    static void bfs() {
+    	Queue<Pos> q = new LinkedList<>();
+    	q.offer(new Pos(0,0,0,0));
+    	visit[0][0][0] = true;
+    	
+    	while(!q.isEmpty()) {
+    		Pos temp = q.poll();
+    		
+    		if(temp.cnt> t) {
+    			continue;
+    		}
+    		if(temp.row == n-1 && temp.col == m-1) {
+    			System.out.println(temp.cnt);
+    			return;
+    		}
+    		
+    		for(int k = 0; k <4; k++) {
+    			int newi = temp.row + di[k];
+    			int newj = temp.col + dj[k];
+    			
+    			if (newi >= 0 && newi < n && newj >= 0 && newj < m) {
+    				//칼 없음
+    				if (temp.state == 0 && !visit[newi][newj][0] && (arr[newi][newj] == 0 || arr[newi][newj] == 2)) {
+    					visit[newi][newj][0] = true;
+    					int nextState = arr[newi][newj] == 2 ? 1 : 0; // 칼을 찾으면 상태를 변경
+    					
+    					q.offer(new Pos(newi, newj, temp.cnt + 1, nextState));
+    				}
+    				
+    				// 칼 얻음
+    				if (temp.state == 1 && !visit[newi][newj][1]) { // 모든칸 방문 가능
+    					visit[newi][newj][1] = true;
                         q.offer(new Pos(newi, newj, temp.cnt + 1, 1));
-                    }
-                }
-            }
-        }
-        System.out.println("Fail");
+    				}
+    			}
+    		}
+    	}
+    	System.out.println("Fail");
     }
 }
