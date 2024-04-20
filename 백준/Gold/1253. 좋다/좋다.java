@@ -27,20 +27,20 @@ public class Main {
 			
 			
 			if(i == 0&& state ==0) { // 맨 앞에 숫자는 뒤에 있는 숫자만 체크
-				rearCheck(target,i+1,n-1,i);
+				rearCheck(target,i+1,n-1);
 			}
 			else if(i == n-1  && state == 0) { //맨 뒤 숫자는 앞에만 체크 하면 됨
-				frontCheck(target,0,i-1,i);
+				frontCheck(target,0,i-1);
 			}
-			else {
+			else { //state 변수 둔 이유는 동일한 타겟 앞에서 이미 찾았을 때 다른 함수 실행 안되게 하려고 
 				if(state == 0) {
-					frontCheck(target,0,i-1,i);
+					frontCheck(target,0,i-1);
 				}
 				if (state == 0) {
-					rearCheck(target,i+1,n-1,i);
+					rearCheck(target,i+1,n-1);
 				}
 				if (state == 0) {
-					centerCheck(target , 0, n-1, i);
+					centerCheck(target , 0, n-1,i);
 				}
 				
 			}
@@ -48,13 +48,10 @@ public class Main {
 		System.out.println(ans);
 	}
 	
-	static void frontCheck(int target, int front, int rear,int now) {
+	static void frontCheck(int target, int front, int rear) {
 		while(front != rear) {
 			int temp =arr[front] + arr[rear]; 
 			if(temp == target) {
-//				System.out.println("now" + now);
-//				System.out.println("target= "+target);
-//				System.out.println(arr[front]+" "+ arr[rear]);
 				ans +=1;
 				state = 1;
 				break;
@@ -69,13 +66,10 @@ public class Main {
 		}
 	}
 	
-	static void rearCheck(int target, int front, int rear, int now) {
+	static void rearCheck(int target, int front, int rear) {
 		while(front != rear) {
 			int temp =arr[front] + arr[rear]; 
 			if(temp == target) {
-//				System.out.println("now" + now);
-//				System.out.println("target= "+target);
-//				System.out.println(arr[front]+" "+ arr[rear]);
 				ans +=1;
 				state =1;
 				
@@ -92,18 +86,13 @@ public class Main {
 	}
 	
 	static void centerCheck(int target, int front, int rear, int now) {
-//		System.out.println(now+"@@@@@@@");
 		while(front != now && rear != now) {
 			int temp =arr[front] + arr[rear]; 
 			if(temp == target) {
-//				System.out.println("now" + now);
-//				System.out.println("target= "+target);
-//				System.out.println(arr[front]+" "+ arr[rear]);
 				ans +=1;
 				state =1;
 				break;
 			}
-			
 			if(temp > target) {
 				rear -=1;
 			}
