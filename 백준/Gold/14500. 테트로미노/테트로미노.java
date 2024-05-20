@@ -1,65 +1,66 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-	static int [][] map;
+	static int n,m;
+	static int [][] arr;
 	static boolean [][] visit;
 	static int [] di = {-1,1,0,0};
 	static int [] dj = {0,0,-1,1};
-	static int n,m;
-	static int max;
-	
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		n = sc.nextInt();
-		m = sc.nextInt();
+	static int ans = 0;
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
 		
-		map = new int[n][m];
+		n = Integer.parseInt(st.nextToken());
+		m = Integer.parseInt(st.nextToken());
+		
+		arr = new int[n][m];
+		for(int i = 0; i < n; i++) {
+			st = new StringTokenizer(br.readLine());
+			for(int j = 0; j < m; j++) {
+				arr[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
 		visit = new boolean[n][m];
 		
 		for(int i = 0; i < n; i++) {
 			for(int j = 0; j < m; j++) {
-				map[i][j] = sc.nextInt();
-			}
-		}
-		
-		max = 0;
-		for(int i = 0; i < n; i++) {
-			for(int j = 0; j < m; j++) {
 				visit[i][j] = true;
-				dfs(i,j,1,map[i][j]);
+				dfs(i,j,1,arr[i][j]);
 				visit[i][j] = false;
-				others(i,j);
 			}
 		}
-		System.out.println(max);
+		System.out.println(ans);
 	}
-	
-	static void dfs(int i , int j, int cnt, int sum) {
-		if(cnt >= 4) {
-			max = Math.max(max, sum);
+	static void dfs(int row, int col, int cnt, int sum) {
+		if(cnt == 4) {
+			ans = Math.max(ans, sum);
 			return;
 		}
 		
-		for(int k = 0; k < 4; k++) {
-			int nx = i + di[k];
-			int ny = j + dj[k];
-			if (nx >= n || ny >= m || nx < 0 || ny < 0) continue;
-			if(!visit[nx][ny]) {
-				visit[nx][ny] = true;
-				dfs(nx, ny,cnt +1, sum + map[nx][ny]);
-				visit[nx][ny] = false;
+		else {
+			for(int d = 0; d <4; d++) {
+				int newi = row + di[d];
+				int newj = col + dj[d];
+				
+				if(newi < 0 || newi >= n || newj < 0|| newj >= m || visit[newi][newj]) {
+					continue;
+				}
+				else {
+					
+					if(cnt ==2) {
+						visit[newi][newj] = true;
+						dfs(row, col, cnt+1, sum+arr[newi][newj]);
+						visit[newi][newj] = false;
+					}
+					visit[newi][newj] = true;
+					dfs(newi,newj,cnt +1,sum+arr[newi][newj]);
+					visit[newi][newj] = false;
+				}
 			}
 		}
-	}
-	
-	static void others(int i , int j) {
-		 if (i+2 < n && j+1 < m)
-	            max = Math.max(max, map[i][j] + map[i+1][j] + map[i+1][j+1] + map[i+2][j]);
-	       if (i+2 < n && j > 0)
-	            max = Math.max(max, map[i][j] + map[i+1][j] + map[i+2][j] + map[i+1][j-1]);
-	        if (i+1 < n && j+2 < m)
-	            max = Math.max(max, map[i][j] + map[i][j+1] + map[i][j+2] + map[i+1][j+1]);
-	        if (i+1 < n && j+1 < m && j > 0)
-	            max = Math.max(max, map[i][j] + map[i+1][j] + map[i+1][j-1] + map[i+1][j+1]);
 	}
 }
