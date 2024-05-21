@@ -40,24 +40,21 @@ public class Main {
 			ans = Math.max(ans, sum);
 			return;
 		}
-		
 		else {
-			for(int d = 0; d <4; d++) {
+			for(int d =0; d < 4; d++) {
 				int newi = row + di[d];
 				int newj = col + dj[d];
-				
-				if(newi < 0 || newi >= n || newj < 0|| newj >= m || visit[newi][newj]) {
+				if(newi < 0 || newi >= n|| newj < 0 || newj >= m || visit[newi][newj]) {
 					continue;
 				}
 				else {
-					
-					if(cnt ==2) {
+					if(cnt == 2) {
 						visit[newi][newj] = true;
-						dfs(row, col, cnt+1, sum+arr[newi][newj]);
+						dfs(row, col, cnt+1, sum+ arr[newi][newj]);
 						visit[newi][newj] = false;
 					}
 					visit[newi][newj] = true;
-					dfs(newi,newj,cnt +1,sum+arr[newi][newj]);
+					dfs(newi, newj, cnt + 1, sum + arr[newi][newj]);
 					visit[newi][newj] = false;
 				}
 			}
