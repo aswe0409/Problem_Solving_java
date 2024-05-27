@@ -19,7 +19,6 @@ public class Solution {
 	static int [] di = {-1,1,0,0,-1,-1,1,1};
 	static int [] dj = {0,0,-1,1,-1,1,-1,1};
 	static int ans;
-	static Queue<Pos> q;
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int t = Integer.parseInt(br.readLine());
@@ -29,7 +28,6 @@ public class Solution {
 			arr = new char[n][n];
 			map = new int[n][n];
 			ans = 0;
-			q = new LinkedList<>();
 			for(int i = 0; i < n; i++) {
 				String temp = br.readLine();
 				for(int j = 0; j < n; j++) {
@@ -92,7 +90,7 @@ public class Solution {
 			for(int d= 0; d<8; d++) {
 				int newi = cur.row + di[d];
 				int newj = cur.col + dj[d];
-				if(newi>= 0&&newi<n && newj>= 0 && newj<n && !visit[newi][newj]&& arr[newi][newj]=='.') {
+				if(newi >= 0&&newi < n && newj >= 0 && newj < n && !visit[newi][newj]&& arr[newi][newj]== '.') {
 					visit[newi][newj] = true;
 					if(map[newi][newj] == 0) { //0이면 연쇄로 퍼져나가야 하니까 0일때만 q에 넣어줌
 						q.offer(new Pos(newi,newj));
