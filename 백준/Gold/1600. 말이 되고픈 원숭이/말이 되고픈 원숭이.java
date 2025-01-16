@@ -1,85 +1,80 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 	static class Pos{
-		int row, col, skill;
-		Pos(int row, int col, int skill){
+		int row, col, skill, time;
+		
+		public Pos(int row, int col, int skill, int time) {
 			this.row = row;
 			this.col = col;
-			this.skill = skill;
+			this.skill = skill; //스킬 사용 횟수
+			this.time = time; // 걸린 시간
 		}
 	}
-	static int k,w,h;
+	
 	static int [][] map;
-	static boolean [][][] visit;
+	static boolean [][][] visited;
+	static int K, W, H;
+	static Queue <Pos> q;
+	static int [] di = {0,0,-1,1};
+	static int [] dj = {1,-1,0,0};
+	static int [] hdi = {-2,-1,1,2,2,1,-1,-2};
+	static int [] hdj = {1,2,2,1,-1,-2,-2,-1};
 	
-	static int [] di = {0,0,1,-1};
-	static int[] dj = {1,-1,0,0};
-	static int[] sdi = {-2,-1,1,2,2,1,-1,-2};
-	static int[] sdj = {1,2,2,1,-1,-2,-2,-1};
-	
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		BufferedReader br  = new BufferedReader(new InputStreamReader(System.in));
-		k = Integer.parseInt(br.readLine());
-		
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		K = Integer.parseInt(br.readLine());
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		w = Integer.parseInt(st.nextToken());
-		h = Integer.parseInt(st.nextToken());
-		map = new int[h][w];
-		visit = new boolean[h][w][k+1];
+
+		W = Integer.parseInt(st.nextToken());
+		H = Integer.parseInt(st.nextToken());
 		
-		for(int i = 0; i < h; i++) {
+		map = new int[H][W];
+		visited = new boolean [H][W][K+1];
+		q = new LinkedList<Pos>();
+		
+		for(int i = 0; i < H; i++) {
 			st = new StringTokenizer(br.readLine());
-			for(int j = 0; j <w; j++) {
+			for(int j = 0; j < W; j++) {
 				map[i][j] = Integer.parseInt(st.nextToken());
 			}
-		}
+		}		
 		System.out.println(bfs());
 	}
 	
 	static int bfs() {
-		Queue<Pos> q = new LinkedList<>();
-		q.offer(new Pos(0,0,0));
-		visit[0][0][0] =true;
-		int time = 0;
+		q.offer(new Pos(0,0,0,0));
+		visited[0][0][0] = true;
 		
 		while(!q.isEmpty()) {
-			int size = q.size();
-			for(int i = 0; i < size; i++) {
-				Pos cur = q.poll();
-				if(cur.row == h-1 && cur.col == w-1) { //도착
-					return time;
-				}
-				else {//스킬 안 쓰고 지나가는 경우 
-					for(int d= 0; d < 4; d++) {
-						int newi = cur.row + di[d];
-						int newj = cur.col + dj[d];
-						if(newi >= 0 && newi < h && newj >= 0 && newj < w && map[newi][newj] == 0
-								&& !visit[newi][newj][cur.skill]) {
-							visit[newi][newj][cur.skill] = true;
-							q.offer(new Pos(newi, newj, cur.skill)); // 스킬 아직 안 썻기 때문에 스킬 횟수 동일
-						}
-					}
-					// 스킬 써서 이동
-					if(cur.skill <= k -1) {
-						for(int d = 0; d <8; d++) {
-							int newi = cur.row + sdi[d];
-							int newj = cur.col + sdj[d];
-							if(newi >= 0 && newi < h && newj >= 0 && newj < w && map[newi][newj] == 0
-									&& !visit[newi][newj][cur.skill+1]) {
-								visit[newi][newj][cur.skill+1] = true;
-								q.offer(new Pos(newi, newj, cur.skill+1));
-							}
-						}
+			Pos temp = q.poll();
+			
+			if(temp.row == H-1 && temp.col == W-1) {
+				return temp.time;
+			}
+			
+			// 스킬 이동
+			if(temp.skill < K) {
+				for(int d = 0; d < 8; d++) {
+					int newi = temp.row + hdi[d];
+					int newj = temp.col + hdj[d];
+					if(newi>= 0 && newi < H && newj >= 0 && newj < W && map[newi][newj] == 0 && !visited[newi][newj][temp.skill+1]) {
+						q.offer(new Pos(newi, newj, temp.skill +1, temp.time+1));
+						visited[newi][newj][temp.skill+1] = true;
 					}
 				}
 			}
-			time +=1;
+			
+			// 도보 이동
+			for(int d = 0; d < 4; d++) {
+				int newi = temp.row + di[d];
+				int newj = temp.col + dj[d];
+				if(newi>= 0 && newi < H && newj >= 0 && newj < W && map[newi][newj] == 0 && !visited[newi][newj][temp.skill]) {	
+					q.offer(new Pos(newi, newj, temp.skill, temp.time+1));
+					visited[newi][newj][temp.skill] = true;
+				}
+			}
 		}
 		return -1;
 	}
