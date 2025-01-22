@@ -1,41 +1,33 @@
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-	static int n;
-	static int m;
-	static int num[];
-	static int ret[];
-	//static boolean visit[];
+	static int n,m;
+	static boolean [] visited;
+	static int ret [];
 	static StringBuilder sb = new StringBuilder();
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		n = sc.nextInt();
-		m = sc.nextInt();
-		num = new int[n];
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		
+		n = Integer.parseInt(st.nextToken());
+		m = Integer.parseInt(st.nextToken());
+		visited = new boolean[n];
 		ret = new int[m];
-		//visit = new boolean[n];
-		
-		for(int i = 0; i < n; i++) {
-			num[i] = i+1;
-		}
-		
-		func(0,0);
-		System.out.println(sb.toString());
+		combi(0,0);
 	}
-	
-	private static void func(int cnt, int start) {
+	static void combi(int cnt, int start) {
 		if(cnt == m) {
-			for(int temp : ret) {
-				sb.append(temp+" ");
+			for(int n : ret) {
+				System.out.print(n+" ");
 			}
-			sb.append('\n');
+			System.out.println();
 			return;
 		}
-		else {
-			for(int i = start; i < n; i++) {
-				ret[cnt] = num[i];
-				func(cnt+1, i+1);
-			}
+		
+		for(int i = start; i < n; i++) {
+			ret[cnt] = i+1;
+			combi(cnt + 1, i + 1);
 		}
 	}
 }
