@@ -15,7 +15,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int t = Integer.parseInt(br.readLine());
-        StringBuilder sb = new StringBuilder();
         
         for(int test = 0; test < t; test++) {
         	int minLength = 10002;
@@ -27,9 +26,7 @@ public class Main {
         	int k = Integer.parseInt(br.readLine());
         	
         	if (k == 1) {
-                //System.out.println("1 1");
-        		sb.append(1+ " "+ 1);
-        		sb.append("\n");
+                System.out.println("1 1");
                 continue;
             }
         	
@@ -60,15 +57,11 @@ public class Main {
         		}
         	}
         	if(minLength == 10002 || maxLength == 0) {
-        		sb.append(-1);
-        		//System.out.println(-1);
+        		System.out.println(-1);
         	}
         	else {
-        		sb.append(minLength+ " "+ maxLength);
-        		//System.out.println(minLength+ " "+ maxLength);
+        		System.out.println(minLength+ " "+ maxLength);
         	}
-        	sb.append("\n");
         }
-        System.out.println(sb);
     }
 }
