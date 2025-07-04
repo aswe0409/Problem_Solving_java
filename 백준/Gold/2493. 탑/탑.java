@@ -5,16 +5,15 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
-    static class Tower {
-        int idx, height;
-
-        public Tower(int idx, int height) {
-            this.idx = idx;
-            this.height = height;
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
+	static class Tower{
+		int idx, height;
+		
+		Tower(int idx, int height){
+			this.idx = idx;
+			this.height = height;
+		}
+	}
+	public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int n = Integer.parseInt(br.readLine());
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -32,7 +31,7 @@ public class Main {
             else{
                 sb.append(s.peek().idx).append(" ");
             }
-            s.push(new Tower(i, temp));
+            s.push(new Tower(i,temp));
         }
         System.out.println(sb.toString());
     }
