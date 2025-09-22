@@ -30,6 +30,8 @@ public class Main {
     	   map = new int[h][w];
     	   visited = new boolean[h][w];
     	   
+    	  
+    	   
     	   for(int i = 0; i < h; i++) {
     		   StringTokenizer line = new StringTokenizer(br.readLine());
     		   for(int j = 0; j < w; j++) {
@@ -41,7 +43,8 @@ public class Main {
     	   for(int i = 0; i < h; i++) {
     		   for(int j = 0; j < w; j++) {
     			   if(map[i][j] == 1 && !visited[i][j]) {
-    				   bfs(i,j);
+    				   //bfs(i,j);
+    				   dfs(i,j);
     				   cnt += 1;
     			   }
     		   }
@@ -65,6 +68,18 @@ public class Main {
     				visited[newi][newj] = true;
     			}
     		}
+    	}
+    }
+    
+    static void dfs(int nowi, int nowj) {
+    	for(int d = 0; d < 8; d++) {
+    		int newi = di[d] + nowi;
+    		int newj = dj[d] + nowj;
+    		
+    		if(newi >= 0 && newi < h && newj >= 0 && newj < w && !visited[newi][newj] && map[newi][newj] == 1) {
+				visited[newi][newj] = true;
+				dfs(newi, newj);
+			}
     	}
     }
 }
