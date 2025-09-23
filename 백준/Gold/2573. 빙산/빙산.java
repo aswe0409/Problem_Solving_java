@@ -1,125 +1,123 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+
+//public class Main {
+//    public static void main(String[] args) throws IOException {
+//        
+//    }
+//}
+
+import java.io.*;
+import java.util.*;
 
 public class Main {
-    static class Pos {
-        int row, col;
-
-        Pos(int row, int col) {
-            this.row = row;
-            this.col = col;
-        }
-    }
-
-    static int[] di = {1, -1, 0, 0};
-    static int[] dj = {0, 0, -1, 1};
-
-    static int n, m;
-    static int[][] arr;
+	static int n,m, state = 0;
+	static int [][] map,copyMap;
+	static boolean [][] visited;
+	static int [] di = {1,-1,0,0};
+	static int [] dj = {0,0,-1,1};
+	static class Pos{
+		int row, col;
+		Pos(int row, int col){
+			this.row = row;
+			this.col = col;
+		}
+	}
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        StringTokenizer st = new StringTokenizer(br.readLine());
-
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
-
-        arr = new int[n][m];
-        for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < m; j++) {
-                arr[i][j] = Integer.parseInt(st.nextToken());
-            }
-        }
-
-        int time = 0;
-        while (true) {
-            if (bfs() == 0) { // 모든 빙산이 녹았을 때
-                time = 0;
-                break;
-            }
-            time++;
-            if (check()) { // 빙산이 분리되었을 때
-                break;
-            }
-        }
-        System.out.println(time);
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	StringTokenizer st = new StringTokenizer(br.readLine());
+    	
+    	n = Integer.parseInt(st.nextToken());
+    	m = Integer.parseInt(st.nextToken());
+    	
+    	map = new int[n][m];
+    	copyMap = new int[n][m];
+    	int time = 0;
+    	int cnt = 0;
+    	
+    	for(int i = 0; i < n; i++) {
+    		StringTokenizer temp = new StringTokenizer(br.readLine());
+    		for(int j = 0; j < m; j++) {
+    			map[i][j] = Integer.parseInt(temp.nextToken());
+    		}
+    	}
+    	
+    	while(true) {
+    		visited = new boolean[n][m];
+        	for(int i = 0; i < n; i++) {
+        		for(int j = 0; j < m; j++) {
+        			//1. 몇개 덩어리 인지 체크
+        			if(map[i][j] != 0 && !visited[i][j]) {
+        				cnt += 1;
+        				bfs(i,j);
+        			}
+        		}
+        	}
+        	
+        	if(cnt >= 2) {
+        		System.out.println(time);
+        		return;
+        	}
+        	//만약에 2개로 안 나눳으면 녹여
+        	melt();
+        	time += 1;
+        	cnt = 0;
+        	if(state == 0) {
+        		System.out.println(0);
+        		return;
+        	}
+        	state = 0;
+    	}
     }
-
-    static int bfs() {
-        Queue<Pos> q = new LinkedList<>();
-        boolean[][] visited = new boolean[n][m];
-        int[][] copy_arr = new int[n][m];
-        
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                copy_arr[i][j] = arr[i][j];
-                if (arr[i][j] != 0) {
-                    q.offer(new Pos(i, j));
-                    visited[i][j] = true; // 방문 표시
-                }
-            }
-        }
-
-        int icebergs = 0; // 빙산의 개수를 세기 위한 변수
-
-        while (!q.isEmpty()) {
-            Pos cur = q.poll();
-            for (int d = 0; d < 4; d++) {
-                int newi = cur.row + di[d];
-                int newj = cur.col + dj[d];
-                if (newi >= 0 && newi < n && newj >= 0 && newj < m && arr[newi][newj] == 0) {
-                    copy_arr[cur.row][cur.col] -= 1;
-                    if (copy_arr[cur.row][cur.col] < 0) {
-                        copy_arr[cur.row][cur.col] = 0;
-                    }
-                }
-            }
-            if (copy_arr[cur.row][cur.col] != 0) { // 현재 위치가 빙산인 경우
-                icebergs++;
-            }
-        }
-        arr = copy_arr; // 원본 배열 업데이트
-        return icebergs;
+    
+    
+    static void bfs(int nowi, int nowj) {
+    	visited[nowi][nowj] = true;
+    	Queue<Pos> q = new LinkedList<>();
+    	q.offer(new Pos(nowi, nowj));
+    	
+    	while(!q.isEmpty()) {
+    		Pos temp = q.poll();
+    		
+    		for(int d = 0; d < 4; d++) {
+    			int newi = di[d] + temp.row;
+    			int newj = dj[d] + temp.col;
+    			
+    			if(newi >= 0 && newi < n && newj >= 0 && newj < m && !visited[newi][newj] && map[newi][newj] > 0) {
+    				visited[newi][newj] = true;
+    				q.offer(new Pos(newi, newj));
+    			}
+    		}
+    	}
     }
-
-    static boolean check() {
-        boolean[][] visited = new boolean[n][m];
-        int count = 0;
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (arr[i][j] != 0 && !visited[i][j]) {
-                    count++;
-                    if (count > 1) { // 빙산이 두 개 이상인 경우
-                        return true;
-                    }
-                    BFS(i, j, visited);
-                }
-            }
-        }
-        return false;
-    }
-
-    static void BFS(int row, int col, boolean[][] visited) {
-        Queue<Pos> q = new LinkedList<>();
-        q.offer(new Pos(row, col));
-        visited[row][col] = true;
-
-        while (!q.isEmpty()) {
-            Pos cur = q.poll();
-            for (int k = 0; k < 4; k++) {
-                int newi = cur.row + di[k];
-                int newj = cur.col + dj[k];
-                if (newi >= 0 && newi < n && newj >= 0 && newj < m && arr[newi][newj] != 0 && !visited[newi][newj]) {
-                    q.offer(new Pos(newi, newj));
-                    visited[newi][newj] = true;
-                }
-            }
-        }
+    
+    static void melt() {
+    	for(int i = 0; i < n; i++) {
+    		for(int j = 0; j < m; j++) {
+    			copyMap[i][j] = map[i][j];
+    		}
+    	}
+    	
+    	for(int i = 0; i < n; i++) {
+    		for(int j = 0; j < m; j++) {
+    			if(map[i][j] > 0) {
+    				for(int d = 0; d < 4; d++) {
+    					int newi = di[d] + i;
+    					int newj = dj[d] + j;
+    					
+    					if(newi >= 0 && newi < n && newj >= 0 && newj < m && map[newi][newj] == 0 && copyMap[i][j] != 0) {
+    						copyMap[i][j] -= 1;
+    					}
+    				}
+    			}
+    		}
+    	}
+    	
+    	for(int i = 0; i < n; i++) {
+    		for(int j = 0; j < m; j++) {
+    			if(copyMap[i][j] > 0) {
+    				state = 1;
+    			}
+    			map[i][j] = copyMap[i][j];
+    		}
+    	}
     }
 }
